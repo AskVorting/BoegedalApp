@@ -1,8 +1,6 @@
 package com.example.boegedalapp
 
 import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -12,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 
 
-class listAdapter(context: Context, dataArraylist: ArrayList<BeerList?>?) :
+class listAdapter(context: Context, dataArraylist: ArrayList<BeerList?>) :
     ArrayAdapter<BeerList>(context, R.layout.list_item, dataArraylist!!) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -25,11 +23,12 @@ class listAdapter(context: Context, dataArraylist: ArrayList<BeerList?>?) :
 
         val listImage = view!! .findViewById<ImageView>(R.id.listImage)
         var listName = view.findViewById<TextView>(R.id.listName)
-        var listType = view.findViewById<TextView>(R.id.listType)
+        var listTypeOfBeer = view.findViewById<TextView>(R.id.listTypeOfBeer)
+
 
         listImage.setImageResource(listData!!.image)
         listName.text = listData.nameOfBeer
-        listType.text = listData.typeOfBeer
+        listTypeOfBeer.text = listData.typeOfBeer
 
         return view
     }

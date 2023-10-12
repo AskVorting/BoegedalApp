@@ -19,7 +19,7 @@ fun MainScreen(){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "This is a app for bøgedal bryghus",
+            text = "This is a app for bøgedal bryghus 1",
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center
         )

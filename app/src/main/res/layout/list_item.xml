@@ -20,16 +20,10 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="12dp"
-
-
         >
 
 
-        <RelativeLayout
-            android:layout_width="287dp"
-            android:layout_height="wrap_content">
 
-        </RelativeLayout>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/listImage"
@@ -61,7 +55,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/listType"
+            android:id="@+id/listTypeOfBeer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
@@ -71,6 +65,7 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
+
 
 
 

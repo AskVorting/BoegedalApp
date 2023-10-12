@@ -5,7 +5,6 @@ data class BeerList (
     var typeOfBeer: String,
     var alcoholContent: String,
     var image : Int,
-    var description: String,
     var price: String,
 
 )
