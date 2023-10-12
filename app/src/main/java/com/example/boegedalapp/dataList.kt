@@ -1,6 +1,6 @@
 package com.plcoding.BoegedalApp
 
-class dataList (
+data class BeerList (
     var nameOfBeer: String,
     var typeOfBeer: String,
     var alcoholContent: String,
