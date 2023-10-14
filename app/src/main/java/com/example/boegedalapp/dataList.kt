@@ -1,11 +1,18 @@
 package com.plcoding.BoegedalApp
 
-data class BeerList (
-    var nameOfBeer: String,
-    var typeOfBeer: String,
-    var alcoholContent: String,
-    var image : Int,
-    var price: String,
-    var description: String
+import androidx.compose.ui.graphics.vector.ImageVector
 
+data class NavigationItem(
+    val title: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
+    val badgeCount: Int? = null
+)
+
+data class BeerItem(
+    var nameOfBeer: String = "",
+    var typeOfBeer: String = "",
+    var alcoholContent: String = "",
+    var price: String = "",
+    var description: String = ""
 )

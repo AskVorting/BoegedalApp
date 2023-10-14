@@ -7,8 +7,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.net.wifi.hotspot2.pps.HomeSp
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -60,45 +62,122 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.boegedalapp.ui.theme.M3NavigationDrawerTheme
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.plcoding.BoegedalApp.BeerItem
+import com.plcoding.BoegedalApp.NavigationItem
 
 
-data class NavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val badgeCount: Int? = null
-)
+//import data
 
-data class BeerList (
-    val nameOfBeer: String,
-    val typeOfBeer: String,
-    val alcoholContent: String,
-    val image : Int,
-    val price: String,
-    val description: String
-)
+
+
+
+
+
 
 
 class AppViewModel : ViewModel() {
-    private val _beerList = MutableStateFlow<List<BeerList>>(emptyList())
-    val beerList: StateFlow<List<BeerList>> = _beerList
 
-    // Implement functions to load and update the beer list as needed.
+
+
+    private val _beerList = MutableStateFlow<List<BeerItem>>(emptyList())
+    val beerList: StateFlow<List<BeerItem>> = _beerList
+
+    // Function to update the beer list in the ViewModel
+    fun updateBeerList(newBeerList: List<BeerItem>) {
+        _beerList.value = newBeerList
+    }
 }
+
+fun getFirebaseData(viewModel: AppViewModel) {
+    val db = Firebase.firestore // Initialize Firestore
+
+
+    val collectionRef = db.collection("/Beers") // Reference to your Firestore collection
+    android.util.
+    Log.d("Firestore", "Collection Reference: $collectionRef")
+
+
+
+    val beerList = mutableListOf<BeerItem>()
+
+    collectionRef.get().addOnSuccessListener { documents ->
+        android.util.Log.d("Firestore1", "Number of documents: ${documents.size()}")
+        for (document in documents) {
+
+            val beer = document.toObject(BeerItem::class.java)
+            beerList.add(beer)
+            android.util.Log.d("Firestore2", "${document.id} => ${document.data}")
+
+        }
+        viewModel.updateBeerList(beerList)
+    }
+
+
+
+}
+
+fun sendFireBaseData(beerItem: BeerItem, viewModel: AppViewModel) {
+    val db = Firebase.firestore
+    val beerCollection = db.collection("Beers")
+
+    val newBeer = hashMapOf(
+        "nameOfBeer" to beerItem.nameOfBeer,
+        "typeOfBeer" to beerItem.typeOfBeer,
+        "alcoholContent" to beerItem.alcoholContent,
+        "price" to beerItem.price,
+        "description" to beerItem.description
+    )
+
+    beerCollection.add(newBeer)
+        .addOnSuccessListener { documentReference ->
+            // Document added successfully
+            // Retrieve the updated list from Firebase and update the ViewModel
+
+            beerCollection.get()
+                .addOnSuccessListener { result ->
+                    val updatedBeerList = result.toObjects(BeerItem::class.java)
+                    viewModel.updateBeerList(updatedBeerList)
+                }
+                .addOnFailureListener { e ->
+                    // Handle errors while fetching the updated list
+                }
+        }
+        .addOnFailureListener { e ->
+            // Handle errors
+        }
+}
+
+
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     // Create an instance of the ViewModel
-    private val viewModel: AppViewModel by viewModels()
+
+
+    // Create an instance of your ViewModel
+    val viewModel: AppViewModel by viewModels()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        getFirebaseData(viewModel)
+
         setContent {
             //Create my Navigation Drawer
             M3NavigationDrawerTheme {
@@ -113,7 +192,7 @@ class MainActivity : ComponentActivity() {
                     NavigationItem(
                         title = "Beers",
                         selectedIcon = Icons.Filled.Favorite,
-                        unselectedIcon = Icons.Outlined.Favorite,
+                        unselectedIcon = Icons.Outlined.FavoriteBorder,
                     ),
                     NavigationItem(
                         title = "Settings",
@@ -169,13 +248,14 @@ class MainActivity : ComponentActivity() {
 
                                                 1 -> {
                                                     //Beers
-                                                    navController.navigate("beers")
+                                                    navController.navigate("beerlistview")
 
 
                                                 }
 
                                                 2 -> {
                                                     //settings
+                                                    navController.navigate("Settings")
                                                 }
 
                                                 3 -> {
@@ -256,6 +336,55 @@ class MainActivity : ComponentActivity() {
                                     composable("home") {
                                         HomeScreen()
                                     }
+
+                                    composable("about") {
+                                        aboutScreen()
+                                    }
+
+                                    composable("Settings") {
+                                        Settings()
+                                    }
+
+                                    composable("beerlistview") {
+                                        BeerListScreen(
+                                            viewModel = viewModel,
+                                            onBeerSelected = { selectedBeer ->
+                                                val route = "beerDetail/${selectedBeer.nameOfBeer}" // Use the beer's name
+                                                navController.navigate(route)
+                                            },
+                                            navController = navController
+                                        )
+                                    }
+                                    composable(
+                                        "beerDetail/{beerName}",
+                                        arguments = listOf(navArgument("beerName") { type = NavType.StringType })
+                                    ) { backStackEntry ->
+                                        val beerName = backStackEntry.arguments?.getString("beerName")
+                                        val selectedBeer = viewModel.beerList.value.firstOrNull { it.nameOfBeer == beerName }
+
+                                        if (selectedBeer != null) {
+                                            BeerDetailScreen(selectedBeer, navController)
+                                        } else {
+                                            Text("Beer not found.")
+                                        }
+                                    }
+
+
+                                    composable("addBeer") {
+                                        // Your AddBeerScreen with the capability to add beer
+                                        AddBeerScreen(
+                                            navController = navController,
+
+
+
+                                        )
+                                    }
+
+                                    composable("quit") {
+                                        finish()
+                                    }
+
+
 
                                 }
                             }

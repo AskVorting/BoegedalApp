@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1012319644483",
+    "project_id": "boegedalapp",
+    "storage_bucket": "boegedalapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012319644483:android:3dc18523cbc702b169ddf6",
+        "android_client_info": {
+          "package_name": "com.example.boegedalapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa7HDWZmQNheLvnhylXkeWU4ld1e6cuVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

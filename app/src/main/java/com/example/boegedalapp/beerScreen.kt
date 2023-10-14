@@ -36,21 +36,237 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import android.os.Parcelable
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.plcoding.BoegedalApp.BeerItem
+
+
+@Composable
+fun BeerListScreen(
+    viewModel: AppViewModel,
+    onBeerSelected: (BeerItem) -> Unit,
+    navController: NavHostController
+) {
+    val beerList by viewModel.beerList.collectAsState()
+
+    if (beerList.isEmpty()) {
+        Text(text = "No beers available.")
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 60.dp)
+        ) {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(beerList) { beer ->
+                    BeerListItem(beer, onBeerSelected)
+                }
+            }
+
+            // Button to navigate to the "Add Beer" screen
+            Button(
+                onClick = {
+                    navController.navigate("addBeer") // Navigate to the "addBeer" destination
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text("Add Beer")
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun BeerListItem(
+    beer: BeerItem,
+    onBeerSelected: (BeerItem) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onBeerSelected(beer) }
+            .padding(8.dp) // Add padding to the Card
+            .clip(MaterialTheme.shapes.medium) // Apply a rounded shape to the Card
+            .background(MaterialTheme.colorScheme.surface)
+            .then(Modifier.background(Color.White, MaterialTheme.shapes.medium))
+            .then(Modifier.shadow(4.dp))
+
+
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Display the beer image
+            /*Image(
+                painter = painterResource(id = beer.image),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
+            )
+            */
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Display beer details in two lines
+            Column(
+                modifier = Modifier.weight(1f), // Allow the text to take available space
+                verticalArrangement = Arrangement.spacedBy(4.dp) // Add vertical spacing
+            ) {
+                Text(
+                    text = beer.nameOfBeer,
+                    style = TextStyle(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "${beer.typeOfBeer}, ${beer.alcoholContent}"
+                )
+                Text(
+                    text = beer.price,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
 
 
 
 
 
+@Composable
+fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
+    // Create a composable to display detailed information about the selected beer.
+    // You can use the `beer` object to display details about the beer.
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(text = beer.nameOfBeer, style = androidx.compose.ui.text.TextStyle(fontWeight = FontWeight.Bold))
+        /*Image(
+            painter = painterResource(id = beer.image),
+            contentDescription = null,
+            modifier = Modifier.size(200.dp)
+        )*/
+
+        Text(text = "Type: ${beer.typeOfBeer}")
+        Text(text = "Alcohol Content: ${beer.alcoholContent}")
+        Text(text = "Price: ${beer.price}")
+        Text(text = "Description: ${beer.description}")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Add a "Back" button to navigate back to the list view
+        Button(onClick = {
+            navController.popBackStack()
+        }) {
+            Text(text = "Back")
+        }
+    }
+}
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddBeerScreen(
+    navController: NavHostController,
+) {
+    var name by remember { mutableStateOf("") }
+    var type by remember { mutableStateOf("") }
+    var alcoholContent by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Add a New Beer",
+            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp),
+            modifier = Modifier.padding(16.dp)
+        )
 
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name of Beer") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
 
+        OutlinedTextField(
+            value = type,
+            onValueChange = { type = it },
+            label = { Text("Type of Beer") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
 
+        OutlinedTextField(
+            value = alcoholContent,
+            onValueChange = { alcoholContent = it },
+            label = { Text("Alcohol Content") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
 
+        OutlinedTextField(
+            value = price,
+            onValueChange = { price = it },
+            label = { Text("Price") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Description") },
+            modifier = Modifier.fillMaxWidth()        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = {
+                val newBeer = BeerItem(
+                    nameOfBeer = name,
+                    typeOfBeer = type,
+                    alcoholContent = alcoholContent,
+                    price = price,
+                    description = description
+                )
+                sendFireBaseData(newBeer, viewModel = AppViewModel())
+
+                getFirebaseData(viewModel = AppViewModel())
+
+                navController.navigateUp() // Navigate back to the previous screen
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Add Beer")
+        }
+    }
+}
 
 
 

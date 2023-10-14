@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -71,6 +72,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.8.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -83,6 +85,10 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    implementation("com.google.firebase:firebase-bom:29.1.0") // This is the Firebase Bill of Materials (BoM)
+    implementation(platform("com.google.firebase:firebase-bom:29.1.0"))
+    implementation("com.google.firebase:firebase-firestore")
 }
 
 tasks.withType<KotlinCompile> {

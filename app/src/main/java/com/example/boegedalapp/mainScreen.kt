@@ -27,4 +27,20 @@ fun HomeScreen(){
     }
 }
 
+
 @Composable
+fun Settings()
+{
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "This is the settings page",
+            modifier = Modifier.padding(16.dp),
+            textAlign = TextAlign.Center
+        )
+
+    }
+}
