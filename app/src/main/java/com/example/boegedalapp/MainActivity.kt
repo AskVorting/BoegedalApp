@@ -215,11 +215,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+
                     //properties of ModalNavigationDrawer
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
                     var selectedItemIndex by rememberSaveable {
                         mutableStateOf(0)
+
                     }
                     ModalNavigationDrawer(
                         drawerContent = {
@@ -374,8 +377,7 @@ class MainActivity : ComponentActivity() {
                                         // Your AddBeerScreen with the capability to add beer
                                         AddBeerScreen(
                                             navController = navController,
-
-
+                                            viewModel = viewModel
 
                                         )
                                     }

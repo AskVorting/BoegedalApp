@@ -1,4 +1,3 @@
-import org.bouncycastle.asn1.iana.IANAObjectIdentifiers.experimental
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -86,9 +85,24 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    implementation("com.google.firebase:firebase-bom:29.1.0") // This is the Firebase Bill of Materials (BoM)
+    implementation("com.google.firebase:firebase-bom:29.1.0")
     implementation(platform("com.google.firebase:firebase-bom:29.1.0"))
     implementation("com.google.firebase:firebase-firestore")
+
+
+    implementation ("com.google.firebase:firebase-firestore:23.0.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.3.1")
+
+
+
+    implementation ("com.google.accompanist:accompanist-coil:0.19.0")
+    implementation ("io.coil-kt:coil-compose:1.4.0")
+
+
+
+
 }
 
 tasks.withType<KotlinCompile> {

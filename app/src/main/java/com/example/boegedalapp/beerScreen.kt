@@ -3,6 +3,7 @@
 package com.example.boegedalapp
 
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import android.os.Parcelable
+import androidx.activity.compose.rememberLauncherForActivityResult
+
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -45,8 +48,39 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.plcoding.BoegedalApp.BeerItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
+import androidx.compose.runtime.remember
+
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.activity.result.ActivityResultLauncher
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+
+import android.net.Uri
+
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.remember
+
+import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 
 
 @Composable
@@ -156,7 +190,7 @@ fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = beer.nameOfBeer, style = androidx.compose.ui.text.TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = beer.nameOfBeer, style = TextStyle(fontWeight = FontWeight.Bold))
         /*Image(
             painter = painterResource(id = beer.image),
             contentDescription = null,
@@ -184,6 +218,7 @@ fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
 @Composable
 fun AddBeerScreen(
     navController: NavHostController,
+    viewModel: AppViewModel
 ) {
     var name by remember { mutableStateOf("") }
     var type by remember { mutableStateOf("") }
@@ -244,7 +279,24 @@ fun AddBeerScreen(
             label = { Text("Description") },
             modifier = Modifier.fillMaxWidth()        )
 
+        var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+        Image(
+            painter = rememberImagePainter(imageUri),
+            contentDescription = null,
+            modifier = Modifier
+                .size(200.dp)
+                .clickable {
+                    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                        imageUri = uri
+                    }
+                    galleryLauncher("image/*")
+                }
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
+
+
 
         Button(
             onClick = {
@@ -255,11 +307,27 @@ fun AddBeerScreen(
                     price = price,
                     description = description
                 )
-                sendFireBaseData(newBeer, viewModel = AppViewModel())
 
-                getFirebaseData(viewModel = AppViewModel())
 
-                navController.navigateUp() // Navigate back to the previous screen
+
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        // First, add the beer to Firebase
+                        sendFireBaseData(newBeer, viewModel)
+
+                        // Then, fetch the updated data
+                        getFirebaseData(viewModel)
+                    } catch (e: Exception) {
+                        // If an error occurs, display an error message
+                        println("Error: ${e.message}")
+
+
+                    }
+
+
+                }
+                navController.navigateUp()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
