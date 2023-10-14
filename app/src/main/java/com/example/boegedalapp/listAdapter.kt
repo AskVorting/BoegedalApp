@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 
-
+/*
 class listAdapter(context: Context, dataArraylist: ArrayList<BeerList?>) :
     ArrayAdapter<BeerList>(context, R.layout.list_item, dataArraylist!!) {
 
@@ -34,3 +34,4 @@ class listAdapter(context: Context, dataArraylist: ArrayList<BeerList?>) :
     }
 }
 
+*/

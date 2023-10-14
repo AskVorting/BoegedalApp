@@ -2,24 +2,225 @@
 
 package com.example.boegedalapp
 
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import androidx.appcompat.app.AppCompatActivity
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.boegedalapp.databinding.ListViewBinding
-import com.plcoding.BoegedalApp.BeerList
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import android.os.Parcelable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+data class BeerList (
+    val nameOfBeer: String,
+    val typeOfBeer: String,
+    val alcoholContent: String,
+    val image : Int,
+    val price: String,
+    val description: String
+)
 
 
 
 @Composable
 fun BeerScreen(navController: NavHostController) {
 
+    BeerRepository()
+    val dataArrayList = BeerRepository().getBeers()
+
+    var currentBeerItem by remember { mutableStateOf<BeerList?>(null) }
+
+    if (currentBeerItem != null) {
+        //navigate to detail screen
+        navController.navigate("detailed")
+
+        }
+
+
+     else {
+        BeerListView(dataList = dataArrayList, currentBeerItem = currentBeerItem) { selectedBeer ->
+            currentBeerItem = selectedBeer
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BeerListView(
+    dataList: List<BeerList>,
+    currentBeerItem: BeerList?,
+    onItemClicked: (BeerList) -> Unit
+) {
+    Scaffold(
+        content = { innerPadding ->
+            LazyColumn(
+                contentPadding = innerPadding,
+            ) {
+                items(dataList) { beerItem ->
+                    BeerListItem(beerItem) {
+                        onItemClicked(beerItem)
+                    }
+                }
+            }
+        }, modifier = Modifier.padding(top = 56.dp) // Add this line
+    )
+}
+
+@Composable
+fun BeerListItem(beerItem: BeerList, onItemClick: (BeerList) -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick(beerItem) },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Display the beer image
+            Image(
+                painter = painterResource(id = beerItem.image),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Display beer details in two lines
+            Column(
+                modifier = Modifier.weight(1f), // Allow the text to take available space
+                verticalArrangement = Arrangement.spacedBy(4.dp) // Add vertical spacing
+            ) {
+                Text(
+                    text = beerItem.nameOfBeer,
+                    style = androidx.compose.ui.text.TextStyle(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "${beerItem.typeOfBeer}, ${beerItem.alcoholContent}"
+                )
+                Text(
+                    text = beerItem.price,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BeerDetailScreen(beerItem: BeerListNavType, navController: NavHostController) {
+    val navController = rememberNavController()
+    val beerItem = remember { navController.currentBackStackEntry?.arguments?.getParcelable<BeerListNavType>("beer") }
+
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+    ) {
+        Text(text = beerItem.nameOfBeer, style = androidx.compose.ui.text.TextStyle(fontWeight = FontWeight.Bold))
+        Image(
+            painter = painterResource(id = beerItem.image),
+            contentDescription = null,
+            modifier = Modifier.size(200.dp)
+        )
+
+
+        Text(text = "Type: ${beerItem.typeOfBeer}")
+        Text(text = "Alcohol Content: ${beerItem.alcoholContent}")
+        Text(text = "Price: ${beerItem.price}")
+        Text(text = "Description: ${beerItem.description}")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Add a "Back" button to navigate back to the list view
+        Button(onClick = {
+            navController.popBackStack()
+        }) {
+            Text(text = "Back")
+        }
+    }
+}
+
+
+
+class BeerRepository {
+    private val dataArrayList = mutableListOf<BeerList>()
+
+    init {
+        // Populate the dataArrayList with your beer items here.
+        dataArrayList.add(BeerList("Gylden K", "Gylden", "4.6%", R.drawable.beergyldenk, "kr. 30",  "Mørk gylden øl, der dufter af karamel og rørsukker. Gylden Karamel har en aromatisk smag af karamelliseret sukker, cappuccino og chokolade, calvado og malt. Meget let bitterhed. Virkelig en dejlig øl, der fylder munden og efterlader en behagelig varme. "),  )
+        dataArrayList.add(BeerList("Flower Power", "IPA", "6.5%", R.drawable.beerflowerpower, "kr. 40", "FlowerPower er skabet til en lille lokal festival som ville have noget øl alle kan drikke. Vi brygger vores NIPA med en rimelig slank krop for en Bøgedal øl og tørhumler med kraftige blomstrede og citrus humler fra USA. Blomsterne aromaen springer ud af glasset" ))
+        // Add more beers as needed.
+    }
+
+    fun getBeers(): List<BeerList> {
+        return dataArrayList
+    }
+}
+
+
+/*
 
     class BeerListView() : AppCompatActivity() {
 
@@ -73,4 +274,4 @@ fun BeerScreen(navController: NavHostController) {
     }
 
 
-}
+*/

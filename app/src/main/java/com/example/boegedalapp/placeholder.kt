@@ -1,17 +1,11 @@
-
 package com.example.boegedalapp
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 
 import android.annotation.SuppressLint
-import android.net.wifi.hotspot2.pps.HomeSp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -68,6 +62,7 @@ import androidx.navigation.navArgument
 import com.example.boegedalapp.ui.theme.M3NavigationDrawerTheme
 
 
+/*
 data class NavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -75,32 +70,14 @@ data class NavigationItem(
     val badgeCount: Int? = null
 )
 
-data class BeerList (
-    val nameOfBeer: String,
-    val typeOfBeer: String,
-    val alcoholContent: String,
-    val image : Int,
-    val price: String,
-    val description: String
-)
-
-
-class AppViewModel : ViewModel() {
-    private val _beerList = MutableStateFlow<List<BeerList>>(emptyList())
-    val beerList: StateFlow<List<BeerList>> = _beerList
-
-    // Implement functions to load and update the beer list as needed.
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity() {
-    // Create an instance of the ViewModel
-    private val viewModel: AppViewModel by viewModels()
-
+class MainActivity1 : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //Create my Navigation Drawer
+
+
             M3NavigationDrawerTheme {
                 val navController = rememberNavController()
                 val items = listOf(
@@ -163,6 +140,8 @@ class MainActivity : ComponentActivity() {
                                                 0 -> {
                                                     //mainScreen
                                                     navController.navigate("home")
+
+
 
 
                                                 }
@@ -253,19 +232,42 @@ class MainActivity : ComponentActivity() {
                                 NavHost(navController = navController, startDestination = "home" )
                                 {
                                     //
-                                    composable("home") {
-                                        HomeScreen()
+                                    composable("home"){
+                                        MainScreen()
                                     }
+                                    composable("beers"){
 
+                                        BeerScreen(navController = navController)
+                                    }
+                                    composable("about"){
+                                        aboutScreen()
+                                    }
+                                    composable(
+                                        "detailed/{beer}",
+                                        arguments = listOf(navArgument("beer") {
+                                            type = NavType.ParcelableType(BeerListNavType::class.java)
+                                        })
+                                    ) { backStackEntry ->
+                                        val selectedItem = backStackEntry.arguments?.getParcelable<BeerListNavType>("beer")
+                                        BeerDetailScreen(selectedItem, navController = navController)
+                                    }
                                 }
                             }
 
                         )
+
+
+
+
+
+
                     }
                 }
             }
+
+
         }
     }
-}
 
 
+}*/

@@ -3,7 +3,7 @@ package com.example.boegedalapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.boegedalapp.databinding.ActivityDetailedBinding
-
+/*
 class DetailedActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityDetailedBinding
@@ -33,3 +33,5 @@ class DetailedActivity : AppCompatActivity(){
 
     }
 }
+
+ */

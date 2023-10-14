@@ -12,17 +12,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MainScreen(){
+fun HomeScreen(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "This is a app for bøgedal bryghus 1",
+            text = "This is a app for bøgedal bryghus",
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center
         )
 
     }
 }
+
+@Composable
