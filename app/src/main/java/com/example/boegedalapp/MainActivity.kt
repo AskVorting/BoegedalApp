@@ -1,28 +1,31 @@
 
 package com.example.boegedalapp
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
+//import image
 
-import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
-import android.net.wifi.hotspot2.pps.HomeSp
+//import size
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
@@ -40,30 +43,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-
-//import image
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.Image
-
-//import size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Close
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -72,8 +61,14 @@ import androidx.navigation.navArgument
 import com.example.boegedalapp.ui.theme.M3NavigationDrawerTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.plcoding.BoegedalApp.BeerItem
 import com.plcoding.BoegedalApp.NavigationItem
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import java.util.UUID
+import androidx.core.ktx.*
 
 
 //import data
@@ -126,36 +121,53 @@ fun getFirebaseData(viewModel: AppViewModel) {
 
 }
 
-fun sendFireBaseData(beerItem: BeerItem, viewModel: AppViewModel) {
+fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel) {
     val db = Firebase.firestore
+
+    var storageRef = Firebase.storage.reference
     val beerCollection = db.collection("Beers")
+
+    // Create a unique name for the image file in Firebase Storage
+    val imageFileName = UUID.randomUUID().toString() + ".jpg"
+    val imageRef = storageRef.child("images/$imageFileName")
 
     val newBeer = hashMapOf(
         "nameOfBeer" to beerItem.nameOfBeer,
         "typeOfBeer" to beerItem.typeOfBeer,
         "alcoholContent" to beerItem.alcoholContent,
         "price" to beerItem.price,
-        "description" to beerItem.description
+        "description" to beerItem.description,
+        "imageURL" to beerItem.imageURL // Store the image file name in Firestore
     )
 
-    beerCollection.add(newBeer)
-        .addOnSuccessListener { documentReference ->
-            // Document added successfully
-            // Retrieve the updated list from Firebase and update the ViewModel
+    // Upload the image to Firebase Storage
+    imageRef.putFile(imageUri)
+        .addOnSuccessListener {
+            // Image uploaded successfully
+            // Add the new beer data to Firestore
+            beerCollection.add(newBeer)
+                .addOnSuccessListener { documentReference ->
+                    // Document added successfully
+                    // Retrieve the updated list from Firebase and update the ViewModel
 
-            beerCollection.get()
-                .addOnSuccessListener { result ->
-                    val updatedBeerList = result.toObjects(BeerItem::class.java)
-                    viewModel.updateBeerList(updatedBeerList)
+                    beerCollection.get()
+                        .addOnSuccessListener { result ->
+                            val updatedBeerList = result.toObjects(BeerItem::class.java)
+                            viewModel.updateBeerList(updatedBeerList)
+                        }
+                        .addOnFailureListener { e ->
+                            // Handle errors while fetching the updated list
+                        }
                 }
                 .addOnFailureListener { e ->
-                    // Handle errors while fetching the updated list
+                    // Handle errors
                 }
         }
         .addOnFailureListener { e ->
-            // Handle errors
+            // Handle errors related to image upload
         }
 }
+
 
 
 

@@ -14,5 +14,7 @@ data class BeerItem(
     var typeOfBeer: String = "",
     var alcoholContent: String = "",
     var price: String = "",
-    var description: String = ""
+    var description: String = "",
+    var imageURL: String = ""
+
 )

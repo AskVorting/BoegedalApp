@@ -4,10 +4,16 @@ package com.example.boegedalapp
 
 
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,66 +27,31 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import android.os.Parcelable
-import androidx.activity.compose.rememberLauncherForActivityResult
-
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.plcoding.BoegedalApp.BeerItem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.withContext
-import androidx.compose.runtime.remember
-
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.activity.result.ActivityResultLauncher
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-
-import android.net.Uri
-
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.runtime.remember
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.remember
-
-import androidx.compose.ui.unit.dp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
 
 
 @Composable
@@ -95,7 +66,8 @@ fun BeerListScreen(
         Text(text = "No beers available.")
     } else {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(top = 60.dp)
         ) {
             LazyColumn(
@@ -214,6 +186,7 @@ fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
 }
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBeerScreen(
@@ -225,123 +198,159 @@ fun AddBeerScreen(
     var alcoholContent by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        Text(
-            text = "Add a New Beer",
-            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp),
-            modifier = Modifier.padding(16.dp)
-        )
+        item {
+            Text(
+                text = "Add a New Beer",
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name of Beer") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        item {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Name of Beer") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        OutlinedTextField(
-            value = type,
-            onValueChange = { type = it },
-            label = { Text("Type of Beer") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        item {
+            OutlinedTextField(
+                value = type,
+                onValueChange = { type = it },
+                label = { Text("Type of Beer") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        OutlinedTextField(
-            value = alcoholContent,
-            onValueChange = { alcoholContent = it },
-            label = { Text("Alcohol Content") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        item {
+            OutlinedTextField(
+                value = alcoholContent,
+                onValueChange = { alcoholContent = it },
+                label = { Text("Alcohol Content") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        OutlinedTextField(
-            value = price,
-            onValueChange = { price = it },
-            label = { Text("Price") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        item {
+            OutlinedTextField(
+                value = price,
+                onValueChange = { price = it },
+                label = { Text("Price") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()        )
+        item {
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        var imageUri by remember { mutableStateOf<Uri?>(null) }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        Image(
-            painter = rememberImagePainter(imageUri),
-            contentDescription = null,
-            modifier = Modifier
-                .size(200.dp)
-                .clickable {
-                    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                        imageUri = uri
+        item {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .clickable {
+                        galleryLauncher.launch("image/*")
                     }
-                    galleryLauncher("image/*")
-                }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-
-
-        Button(
-            onClick = {
-                val newBeer = BeerItem(
-                    nameOfBeer = name,
-                    typeOfBeer = type,
-                    alcoholContent = alcoholContent,
-                    price = price,
-                    description = description
-                )
-
-
-
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        // First, add the beer to Firebase
-                        sendFireBaseData(newBeer, viewModel)
-
-                        // Then, fetch the updated data
-                        getFirebaseData(viewModel)
-                    } catch (e: Exception) {
-                        // If an error occurs, display an error message
-                        println("Error: ${e.message}")
-
-
+            ) {
+                if (imageUri != null) {
+                    // Display the selected image
+                    Image(
+                        painter = rememberImagePainter(data = imageUri),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    // Display a box outline with the text "Select Image"
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.LightGray)
+                    ) {
+                        Text(
+                            text = "Select Image",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
-
-
                 }
-                navController.navigateUp()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Add Beer")
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        item {
+            Button(
+                onClick = {
+                    val newBeer = BeerItem(
+                        nameOfBeer = name,
+                        typeOfBeer = type,
+                        alcoholContent = alcoholContent,
+                        price = price,
+                        description = description,
+                        imageURL = imageUri.toString() // Convert Uri to string for storage
+                    )
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            // First, add the beer to Firebase
+                            sendFirebaseData(newBeer, imageUri , viewModel)
+
+                            // Then, fetch the updated data
+                            getFirebaseData(viewModel)
+                        } catch (e: Exception) {
+                            // If an error occurs, display an error message
+                            println("Error: ${e.message}")
+                        }
+                    }
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Beer")
+            }
         }
     }
 }
-
-
-
-
-
-
-
 
 
 
