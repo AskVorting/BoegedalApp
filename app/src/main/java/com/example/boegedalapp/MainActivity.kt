@@ -5,6 +5,7 @@ package com.example.boegedalapp
 //import image
 
 //import size
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -52,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.ktx.*
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -68,8 +70,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
-import androidx.core.ktx.*
-
 
 //import data
 
@@ -96,30 +96,23 @@ class AppViewModel : ViewModel() {
 fun getFirebaseData(viewModel: AppViewModel) {
     val db = Firebase.firestore // Initialize Firestore
 
-
     val collectionRef = db.collection("/Beers") // Reference to your Firestore collection
-    android.util.
-    Log.d("Firestore", "Collection Reference: $collectionRef")
-
-
-
     val beerList = mutableListOf<BeerItem>()
 
     collectionRef.get().addOnSuccessListener { documents ->
-        android.util.Log.d("Firestore1", "Number of documents: ${documents.size()}")
+
+        val storageRef = Firebase.storage.reference
+
         for (document in documents) {
-
             val beer = document.toObject(BeerItem::class.java)
+
+            // Download the image from Firebase Storage
             beerList.add(beer)
-            android.util.Log.d("Firestore2", "${document.id} => ${document.data}")
-
+            viewModel.updateBeerList(beerList)
         }
-        viewModel.updateBeerList(beerList)
     }
-
-
-
 }
+
 
 fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel) {
     val db = Firebase.firestore
@@ -141,31 +134,51 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
     )
 
     // Upload the image to Firebase Storage
+    // Upload the image to Firebase Storage
     imageRef.putFile(imageUri)
-        .addOnSuccessListener {
+        .addOnSuccessListener { uploadTask ->
             // Image uploaded successfully
-            // Add the new beer data to Firestore
-            beerCollection.add(newBeer)
-                .addOnSuccessListener { documentReference ->
-                    // Document added successfully
-                    // Retrieve the updated list from Firebase and update the ViewModel
+            // Get the download URL of the uploaded image
+            uploadTask.storage.downloadUrl
+                .addOnSuccessListener { uri ->
+                    val imageURL = uri.toString()
 
-                    beerCollection.get()
-                        .addOnSuccessListener { result ->
-                            val updatedBeerList = result.toObjects(BeerItem::class.java)
-                            viewModel.updateBeerList(updatedBeerList)
+                    // Add the new beer data to Firestore with the imageURL
+                    val newBeer = hashMapOf(
+                        "nameOfBeer" to beerItem.nameOfBeer,
+                        "typeOfBeer" to beerItem.typeOfBeer,
+                        "alcoholContent" to beerItem.alcoholContent,
+                        "price" to beerItem.price,
+                        "description" to beerItem.description,
+                        "imageURL" to imageURL // Store the image URL in Firestore
+                    )
+
+                    beerCollection.add(newBeer)
+                        .addOnSuccessListener { documentReference ->
+                            // Document added successfully
+                            // Retrieve the updated list from Firebase and update the ViewModel
+
+                            beerCollection.get()
+                                .addOnSuccessListener { result ->
+                                    val updatedBeerList = result.toObjects(BeerItem::class.java)
+                                    viewModel.updateBeerList(updatedBeerList)
+                                }
+                                .addOnFailureListener { e ->
+                                    // Handle errors while fetching the updated list
+                                }
                         }
                         .addOnFailureListener { e ->
-                            // Handle errors while fetching the updated list
+                            // Handle errors
                         }
                 }
                 .addOnFailureListener { e ->
-                    // Handle errors
+                    // Handle errors related to getting the download URL
                 }
         }
         .addOnFailureListener { e ->
             // Handle errors related to image upload
         }
+
 }
 
 
@@ -184,6 +197,8 @@ class MainActivity : ComponentActivity() {
 
 
 
+
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -227,14 +242,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-
                     //properties of ModalNavigationDrawer
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
                     var selectedItemIndex by rememberSaveable {
                         mutableStateOf(0)
-
                     }
                     ModalNavigationDrawer(
                         drawerContent = {
@@ -275,7 +287,7 @@ class MainActivity : ComponentActivity() {
 
                                                 3 -> {
                                                     //about
-                                                    navController.navigate("about")
+                                                    navController.navigate("addBeer")
                                                 }
 
                                                 4 -> {
@@ -389,8 +401,7 @@ class MainActivity : ComponentActivity() {
                                         // Your AddBeerScreen with the capability to add beer
                                         AddBeerScreen(
                                             navController = navController,
-                                            viewModel = viewModel
-
+                                            viewModel = viewModel,
                                         )
                                     }
 

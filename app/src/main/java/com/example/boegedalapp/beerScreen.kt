@@ -7,6 +7,8 @@ package com.example.boegedalapp
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,20 +40,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.plcoding.BoegedalApp.BeerItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 
 @Composable
@@ -104,14 +108,11 @@ fun BeerListItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onBeerSelected(beer) }
-            .padding(8.dp) // Add padding to the Card
-            .clip(MaterialTheme.shapes.medium) // Apply a rounded shape to the Card
+            .padding(8.dp)
+            .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surface)
             .then(Modifier.background(Color.White, MaterialTheme.shapes.medium))
             .then(Modifier.shadow(4.dp))
-
-
-
     ) {
         Row(
             modifier = Modifier
@@ -119,19 +120,19 @@ fun BeerListItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Display the beer image
-            /*Image(
-                painter = painterResource(id = beer.image),
+            // Display the beer image using Coil
+            Image(
+                painter = rememberImagePainter(data = beer.imageURL),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp)
             )
-            */
+
             Spacer(modifier = Modifier.width(16.dp))
 
             // Display beer details in two lines
             Column(
-                modifier = Modifier.weight(1f), // Allow the text to take available space
-                verticalArrangement = Arrangement.spacedBy(4.dp) // Add vertical spacing
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = beer.nameOfBeer,
@@ -153,6 +154,7 @@ fun BeerListItem(
 
 
 
+
 @Composable
 fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
     // Create a composable to display detailed information about the selected beer.
@@ -163,11 +165,13 @@ fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = beer.nameOfBeer, style = TextStyle(fontWeight = FontWeight.Bold))
-        /*Image(
-            painter = painterResource(id = beer.image),
+
+        // Load and display the beer's image using the imageURL
+        Image(
+            painter = rememberImagePainter(beer.imageURL),
             contentDescription = null,
             modifier = Modifier.size(200.dp)
-        )*/
+        )
 
         Text(text = "Type: ${beer.typeOfBeer}")
         Text(text = "Alcohol Content: ${beer.alcoholContent}")
@@ -184,6 +188,7 @@ fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
         }
     }
 }
+
 
 
 
@@ -277,6 +282,7 @@ fun AddBeerScreen(
             )
         }
 
+
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -333,7 +339,7 @@ fun AddBeerScreen(
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             // First, add the beer to Firebase
-                            sendFirebaseData(newBeer, imageUri , viewModel)
+                            sendFirebaseData(newBeer, imageUri!!, viewModel)
 
                             // Then, fetch the updated data
                             getFirebaseData(viewModel)
@@ -348,9 +354,10 @@ fun AddBeerScreen(
             ) {
                 Text("Add Beer")
             }
-        }
+
+
     }
-}
+}}
 
 
 
