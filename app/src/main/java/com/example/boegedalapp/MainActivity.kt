@@ -91,6 +91,8 @@ class AppViewModel : ViewModel() {
     fun updateBeerList(newBeerList: List<BeerItem>) {
         _beerList.value = newBeerList
     }
+
+
 }
 
 fun getFirebaseData(viewModel: AppViewModel) {
@@ -124,20 +126,9 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
     val imageFileName = UUID.randomUUID().toString() + ".jpg"
     val imageRef = storageRef.child("images/$imageFileName")
 
-    val newBeer = hashMapOf(
-        "nameOfBeer" to beerItem.nameOfBeer,
-        "typeOfBeer" to beerItem.typeOfBeer,
-        "alcoholContent" to beerItem.alcoholContent,
-        "price" to beerItem.price,
-        "description" to beerItem.description,
-        "imageURL" to beerItem.imageURL // Store the image file name in Firestore
-    )
-
-    // Upload the image to Firebase Storage
     // Upload the image to Firebase Storage
     imageRef.putFile(imageUri)
         .addOnSuccessListener { uploadTask ->
-            // Image uploaded successfully
             // Get the download URL of the uploaded image
             uploadTask.storage.downloadUrl
                 .addOnSuccessListener { uri ->
@@ -157,7 +148,6 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
                         .addOnSuccessListener { documentReference ->
                             // Document added successfully
                             // Retrieve the updated list from Firebase and update the ViewModel
-
                             beerCollection.get()
                                 .addOnSuccessListener { result ->
                                     val updatedBeerList = result.toObjects(BeerItem::class.java)
@@ -189,7 +179,7 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-    // Create an instance of the ViewModel
+
 
 
     // Create an instance of your ViewModel
@@ -292,6 +282,7 @@ class MainActivity : ComponentActivity() {
 
                                                 4 -> {
                                                     //quit
+                                                    navController.navigate("quit")
                                                 }
                                             }
 
@@ -356,7 +347,7 @@ class MainActivity : ComponentActivity() {
                             },
 
 
-                            content = { innerPadding -> // Add padding to inner elements
+                            content = { innerPadding ->
                                 NavHost(navController = navController, startDestination = "home" )
                                 {
                                     //
@@ -398,7 +389,6 @@ class MainActivity : ComponentActivity() {
 
 
                                     composable("addBeer") {
-                                        // Your AddBeerScreen with the capability to add beer
                                         AddBeerScreen(
                                             navController = navController,
                                             viewModel = viewModel,

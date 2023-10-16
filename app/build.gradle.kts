@@ -1,4 +1,3 @@
-import org.bouncycastle.asn1.iana.IANAObjectIdentifiers.experimental
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -37,7 +36,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        dataBinding = true
+
         compose = true
     }
 
@@ -89,21 +88,7 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.6.2")
-
-
-
-
-
-
-
-
     implementation ("io.coil-kt:coil-compose:1.4.0")
-
-
-
-
-
-
 }
 
 tasks.withType<KotlinCompile> {

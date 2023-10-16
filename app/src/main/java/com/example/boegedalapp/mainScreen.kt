@@ -30,13 +30,13 @@ fun HomeScreen() {
                 .fillMaxSize()
         )
 
-        // Add text on top of the image
+
         Text(
             text = "welcome to Bøgedal Brew",
-            color = Color.White, // Set text color
-            fontSize = 24.sp, // Set text size
+            color = Color.White,
+            fontSize = 24.sp,
             modifier = Modifier
-                .align(Alignment.Center) // Center the text
+                .align(Alignment.Center)
         )
     }
 }
