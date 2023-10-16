@@ -7,8 +7,6 @@ package com.example.boegedalapp
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,16 +39,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.plcoding.BoegedalApp.BeerItem
 import kotlinx.coroutines.CoroutineScope
@@ -124,7 +123,10 @@ fun BeerListItem(
             Image(
                 painter = rememberImagePainter(data = beer.imageURL),
                 contentDescription = null,
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(16.dp)) ,
+                contentScale = ContentScale.Crop,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -158,19 +160,29 @@ fun BeerListItem(
 @Composable
 fun BeerDetailScreen(beer: BeerItem, navController: NavController) {
     // Create a composable to display detailed information about the selected beer.
-    // You can use the `beer` object to display details about the beer.
+
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 60.dp, start = 10.dp, end = 10.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = beer.nameOfBeer, style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = beer.nameOfBeer,
+            style = TextStyle(fontWeight = FontWeight.Bold , fontSize = 40.sp),
+
+        )
+
 
         // Load and display the beer's image using the imageURL
         Image(
             painter = rememberImagePainter(beer.imageURL),
             contentDescription = null,
-            modifier = Modifier.size(200.dp)
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(300.dp)
+                .clip(RoundedCornerShape(16.dp))
+
         )
 
         Text(text = "Type: ${beer.typeOfBeer}")
