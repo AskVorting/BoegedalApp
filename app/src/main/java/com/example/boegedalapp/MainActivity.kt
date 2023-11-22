@@ -25,6 +25,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
@@ -212,6 +214,11 @@ class MainActivity : ComponentActivity() {
                         unselectedIcon = Icons.Outlined.FavoriteBorder,
                     ),
                     NavigationItem(
+                        title = "Find Us",
+                        selectedIcon = Icons.Filled.LocationOn,
+                        unselectedIcon = Icons.Outlined.LocationOn,
+                    ),
+                    NavigationItem(
                         title = "Settings",
                         selectedIcon = Icons.Filled.Settings,
                         unselectedIcon = Icons.Outlined.Settings,
@@ -271,16 +278,21 @@ class MainActivity : ComponentActivity() {
                                                 }
 
                                                 2 -> {
+                                                    //Find Us
+                                                    navController.navigate("FindUs")
+                                                }
+
+                                                3 -> {
                                                     //settings
                                                     navController.navigate("Settings")
                                                 }
 
-                                                3 -> {
+                                                4 -> {
                                                     //about
                                                     navController.navigate("addBeer")
                                                 }
 
-                                                4 -> {
+                                                5 -> {
                                                     //quit
                                                     navController.navigate("quit")
                                                 }
@@ -361,6 +373,10 @@ class MainActivity : ComponentActivity() {
 
                                     composable("Settings") {
                                         Settings()
+                                    }
+
+                                    composable("FindUs") {
+                                        PreviewMap()
                                     }
 
                                     composable("beerlistview") {
