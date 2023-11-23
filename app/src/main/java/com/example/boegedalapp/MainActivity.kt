@@ -181,14 +181,8 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-
-
-
     // Create an instance of your ViewModel
     val viewModel: AppViewModel by viewModels()
-
-
-
 
     @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {

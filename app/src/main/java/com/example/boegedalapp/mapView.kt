@@ -9,47 +9,38 @@ import android.os.Bundle
 import androidx.compose.foundation.layout.Box
 
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.example.boegedalapp.databinding.ActivityMapsBinding
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.GoogleMap
+
+
 @Composable
-fun GoogleMapView(
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-
-    AndroidView(
-        modifier = modifier.fillMaxSize(),
-        factory = { context ->
-            MapView(context).apply {
-                // Initialize the MapView
-                onCreate(null)
-            }
-        },
-        update = { mapView ->
-            mapView.getMapAsync { googleMap ->
-                // Do operations on the GoogleMap
-                // For example, adding markers or moving the camera
-                googleMap.apply {
-                    // Add a marker
-                    val sydney = LatLng(-34.0, 151.0)
-                    addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-
-                    // Move camera to the marker
-                    moveCamera(CameraUpdateFactory.newLatLng(sydney))
-                }
-            }
-        }
-    )
+fun MapScreen() {
+    val mumbai = LatLng(59.9760, 17.6143)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(mumbai, 11f)
+    }
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState
+    ) {
+        Marker(
+            state = MarkerState(position = mumbai),
+            title = "Place This Needs to Go"
+        )
+    }
 }
+
 
 
 @Composable
 fun PreviewMap() {
     Box(modifier = Modifier.fillMaxSize()) {
-        GoogleMapView(modifier = Modifier.fillMaxSize())
+        MapScreen()
     }
 }
