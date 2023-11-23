@@ -18,21 +18,33 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.GoogleMap
 
+data class Place(val name: String, val lat: Double, val Lng: Double)
+val places = listOf(Place("Noma", 55.6828, 12.6106),
+                    Place("Hærværk", 56.1477, 10.1960),
+                    Place("Alchemist", 55.6940, 11.2000))
 
 @Composable
 fun MapScreen() {
-    val mumbai = LatLng(59.9760, 17.6143)
+    val boegedal = LatLng(55.6720, 9.4073)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(mumbai, 11f)
+        position = CameraPosition.fromLatLngZoom(boegedal, 11f)
     }
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     ) {
         Marker(
-            state = MarkerState(position = mumbai),
-            title = "Place This Needs to Go"
+            state = MarkerState(position = boegedal),
+            title = "Boegedal Brew"
         )
+
+        for (place in places){
+            val pos = LatLng(place.lat, place.Lng)
+            Marker(
+                state = MarkerState(position = pos),
+                title = place.name
+            )
+        }
     }
 }
 
