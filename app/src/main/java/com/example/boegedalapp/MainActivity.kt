@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -200,28 +202,32 @@ class MainActivity : ComponentActivity() {
                         title = "Home",
                         selectedIcon = Icons.Filled.Home,
                         unselectedIcon = Icons.Outlined.Home,
-
                         ),
+
                     NavigationItem(
                         title = "Beers",
                         selectedIcon = Icons.Filled.Favorite,
                         unselectedIcon = Icons.Outlined.FavoriteBorder,
                     ),
+
                     NavigationItem(
                         title = "Find Us",
                         selectedIcon = Icons.Filled.LocationOn,
                         unselectedIcon = Icons.Outlined.LocationOn,
                     ),
-                    NavigationItem(
-                        title = "Settings",
-                        selectedIcon = Icons.Filled.Settings,
-                        unselectedIcon = Icons.Outlined.Settings,
-                    ),
+
                     NavigationItem(
                         title = "About",
                         selectedIcon = Icons.Filled.Info,
                         unselectedIcon = Icons.Outlined.Info,
                     ),
+
+                    NavigationItem(
+                        title = "Log In",
+                        selectedIcon = Icons.Filled.AccountCircle,
+                        unselectedIcon = Icons.Outlined.AccountCircle,
+                    ),
+
                     NavigationItem(
                         title = "Quit",
                         selectedIcon = Icons.Filled.Close,
@@ -277,14 +283,15 @@ class MainActivity : ComponentActivity() {
                                                 }
 
                                                 3 -> {
-                                                    //settings
-                                                    navController.navigate("Settings")
-                                                }
-
-                                                4 -> {
                                                     //about
                                                     navController.navigate("addBeer")
                                                 }
+
+                                                4 -> {
+                                                    //Login
+                                                    navController.navigate("login")
+                                                }
+
 
                                                 5 -> {
                                                     //quit
@@ -365,8 +372,8 @@ class MainActivity : ComponentActivity() {
                                         aboutScreen()
                                     }
 
-                                    composable("Settings") {
-                                        Settings()
+                                    composable("login") {
+                                        LogIn()
                                     }
 
                                     composable("FindUs") {

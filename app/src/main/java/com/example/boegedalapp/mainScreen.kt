@@ -55,8 +55,9 @@ fun HomeScreen() {
 }
 
 
+// Login Outline
 @Composable
-fun Settings()
+fun LogIn()
 {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -64,7 +65,7 @@ fun Settings()
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "This is the settings page",
+            text = "This is the Log In page",
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center
         )
