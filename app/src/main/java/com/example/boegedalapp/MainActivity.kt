@@ -78,16 +78,7 @@ import java.util.UUID
 //import data
 
 
-
-
-
-
-
-
 class AppViewModel : ViewModel() {
-
-
-
     private val _beerList = MutableStateFlow<List<BeerItem>>(emptyList())
     val beerList: StateFlow<List<BeerItem>> = _beerList
 

@@ -12,7 +12,20 @@
           "package_name": "com.example.boegedalapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1012319644483-6uhpbf0vrqeodktpceou7v0kta6cpuau.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.boegedalapp",
+            "certificate_hash": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+          }
+        },
+        {
+          "client_id": "1012319644483-isj1p3a23p57g2jj6l7fqukbos5dnsqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCa7HDWZmQNheLvnhylXkeWU4ld1e6cuVw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012319644483-isj1p3a23p57g2jj6l7fqukbos5dnsqv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

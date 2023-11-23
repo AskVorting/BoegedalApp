@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -63,6 +66,12 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:4.1.1")        //Composable map requirement
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")  //Maps requirement
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0")) //For authentication
+    implementation("com.google.firebase:firebase-auth")                 //For authentication
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation("com.google.dagger:hilt-android:2.44")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
 
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -118,3 +127,7 @@ secrets {
     ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
 }
 
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
