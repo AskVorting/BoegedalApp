@@ -364,10 +364,5 @@ fun AddBeerScreen(
 
 
     }
-}}
-
-
-
-
-
-
+}
+}

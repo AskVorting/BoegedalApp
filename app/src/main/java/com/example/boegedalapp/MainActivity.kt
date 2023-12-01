@@ -74,6 +74,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
+//import com.example.boegedalapp.presentation.login_screen.SignInScreen
+import com.example.boegedalapp.presentation.signup_screen.SignUpScreen
+import dagger.hilt.android.lifecycle.HiltViewModel
+import android.app.Application
+import com.example.boegedalapp.accountNav.NavigationGraph
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.AndroidEntryPoint
+
 
 //import data
 
@@ -166,13 +174,8 @@ fun sendFirebaseData(beerItem: BeerItem, imageUri: Uri, viewModel: AppViewModel)
 
 }
 
-
-
-
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     // Create an instance of your ViewModel
     val viewModel: AppViewModel by viewModels()
@@ -279,8 +282,8 @@ class MainActivity : ComponentActivity() {
                                                 }
 
                                                 4 -> {
-                                                    //Login
-                                                    navController.navigate("login")
+                                                    //Account Screen
+                                                    navController.navigate("account")
                                                 }
 
 
@@ -363,9 +366,10 @@ class MainActivity : ComponentActivity() {
                                         aboutScreen()
                                     }
 
-                                    composable("login") {
-                                        LogIn()
+                                    composable("account") {
+                                        NavigationGraph()
                                     }
+
 
                                     composable("FindUs") {
                                         PreviewMap()
