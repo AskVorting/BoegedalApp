@@ -217,7 +217,7 @@ class MainActivity : ComponentActivity() {
                     ),
 
                     NavigationItem(
-                        title = "Log In",
+                        title = "Account",
                         selectedIcon = Icons.Filled.AccountCircle,
                         unselectedIcon = Icons.Outlined.AccountCircle,
                     ),
@@ -278,7 +278,7 @@ class MainActivity : ComponentActivity() {
 
                                                 3 -> {
                                                     //about
-                                                    navController.navigate("addBeer")
+                                                    navController.navigate("about")
                                                 }
 
                                                 4 -> {

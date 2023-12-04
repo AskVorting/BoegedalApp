@@ -50,6 +50,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.rpc.context.AttributeContext.Auth
 import com.plcoding.BoegedalApp.BeerItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,17 +90,19 @@ fun BeerListScreen(
 
             }
 
-            Button(
-                onClick = {
-                    navController.navigate("addBeer")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Add Beer")
-            }
-
+            val user = Firebase.auth.currentUser
+                if(user != null) {
+                    Button(
+                        onClick = {
+                            navController.navigate("addBeer")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text("Add Beer")
+                    }
+                }
 
         }
     }

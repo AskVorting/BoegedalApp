@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.boegedalapp.R
+import com.example.boegedalapp.accountNav.Screens
 import com.example.boegedalapp.ui.theme.lightBlue
 import kotlinx.coroutines.launch
 
@@ -132,12 +133,11 @@ fun SignUpScreen(
             modifier = Modifier
                 .padding(15.dp)
                 .clickable {
-                    navController.popBackStack()
+                    navController.navigate(Screens.SignInScreen.route)
                 },
-            text = "Back",
-            fontWeight = FontWeight.Bold, color = Color.Black, //fontFamily = RegularFont
+            text = "Already Have an account? sign In",
+            fontWeight = FontWeight.Bold, color = Color.Black
         )
-
 
         LaunchedEffect(key1 = state.value?.isSuccess) {
             scope.launch {
