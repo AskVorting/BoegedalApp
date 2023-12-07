@@ -57,7 +57,8 @@ import com.plcoding.BoegedalApp.BeerItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import com.example.boegedalapp.accountNav.NavigationGraph
+import com.example.boegedalapp.accountNav.Screens
 
 
 @Composable
@@ -85,11 +86,12 @@ fun BeerListScreen(
             }
 
             //knap som skulle være med pga opgaven krav.....
+            /*
             Button(onClick = { navController.navigateUp()}) {
                 Text(text = "Back")
 
             }
-
+            */
             val user = Firebase.auth.currentUser
                 if(user != null) {
                     Button(
@@ -101,6 +103,23 @@ fun BeerListScreen(
                             .padding(16.dp)
                     ) {
                         Text("Add Beer")
+                    }
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .padding(15.dp),
+                        text = "You need to log in to add beers!",
+                        fontWeight = FontWeight.Bold, color = Color.Black
+                    )
+                    Button(
+                        onClick = {
+                            navController.navigate("account")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text("Log In")
                     }
                 }
 

@@ -191,6 +191,7 @@ fun LoggedInScreen(navController: NavController) {
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
+
         LogoutButton(navController = navController)
     }
 }
