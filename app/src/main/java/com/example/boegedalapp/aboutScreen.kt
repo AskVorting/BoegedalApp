@@ -23,7 +23,7 @@ fun aboutScreen(){
 
     ) {
         Text(
-            text = "Whoe are we?",
+            text = "Who are we?",
             fontSize = 35.sp,
             textAlign = TextAlign.Left,
             fontWeight = FontWeight.Bold
