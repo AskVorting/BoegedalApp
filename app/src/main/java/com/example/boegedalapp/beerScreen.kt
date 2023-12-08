@@ -93,11 +93,11 @@ fun BeerListScreen(
             }
             */
             val user = Firebase.auth.currentUser
-                if(user != null) {
-                    Button(
-                        onClick = {
-                            navController.navigate("addBeer")
-                        },
+            if(user != null) {
+                Button(
+                    onClick = {
+                        navController.navigate("addBeer")
+                              },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
